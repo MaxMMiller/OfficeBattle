@@ -1,0 +1,18 @@
+#gameWindow{
+    border: 1px solid black;
+}
+
+/*
+    Centers div Horizontally and vertically
+*/
+.game-wrapper{
+    margin: 0; /* Remove default margins */
+    display: flex; /* Use Flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+}
+/* Remove Default Margins of Body*/
+body{
+    margin: 0;
+}

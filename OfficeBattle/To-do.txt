@@ -1,0 +1,16 @@
+- Health Bar
+- Punch attack
+- Kick attack
+- Crouch
+- Stun effect (kicked when crouched + punched when jumping)
+- punch and kick cancel eachother out
+- make players always face eachother
+
+- add idle and movement animations
+- attack animations
+
+
+
+
+
+GOALS
