@@ -28,7 +28,7 @@ class Sprite {
 
     update() {
         this.draw()//draw image
-        this.framesElaspes++ 
+        this.framesElasped++ 
 
         //Slow animations by waiting for a number of frames (frameHold) to elaspe
         if (this.framesElapsed % this.framesHold === 0){
@@ -64,7 +64,12 @@ class Fighter {
             height: 50,
             active: false,
             framesCurrent: 0,
-            framesTotal: 10
+            framesTotal: {
+                startup: 5,    // frames before hit becomes active
+                active: 3,     // frames where hit is active
+                recovery: 7    // frames after hit before next action
+            },
+            phase: 'none'      // 'startup', 'active', 'recovery', or 'none'
         }
         this.canAttack = true
         this.healthBar = healthBar
@@ -85,9 +90,6 @@ class Fighter {
     setXVelocity(v){
         this.velocity.x = v
     }
-    canAttack(){
-        return this.canAttack
-    }
     getHeight(){
         return this.height
     }
@@ -96,7 +98,7 @@ class Fighter {
     }
 
     getPunchBox(){
-        console.log(this.punchBox)
+        //console.log(this.punchBox)
         return this.punchBox
     }
 
@@ -150,22 +152,49 @@ class Fighter {
             this.position.x = canvas.width - this.width
         }
 
-        //Punch Attack
-        if(this.punchBox.active){//if player punches, set ability to attack to false until attack is over
+         // Updated punch attack logic
+         if (this.punchBox.phase !== 'none') {
             this.canAttack = false
-            this.punchBox.framesCurrent++//count total frames the attack lasted
+            this.punchBox.framesCurrent++
 
-            //Once the attack has lasted longer than the moves frame limit
-            //Return values to default and end attack
-            if(this.punchBox.framesCurrent >= this.punchBox.framesTotal){
-                this.punchBox.framesCurrent = 0
-                this.punchBox.active = false
-                this.canAttack = true
+            // Handle different phases of the attack
+            switch (this.punchBox.phase) {
+                case 'startup':
+                    if (this.punchBox.framesCurrent >= this.punchBox.framesTotal.startup) {
+                        this.punchBox.phase = 'active'
+                        this.punchBox.framesCurrent = 0
+                        this.punchBox.active = true
+                    }
+                    break
+                    
+                case 'active':
+                    if (this.punchBox.framesCurrent >= this.punchBox.framesTotal.active) {
+                        this.punchBox.phase = 'recovery'
+                        this.punchBox.framesCurrent = 0
+                        this.punchBox.active = false
+                    }
+                    break
+                    
+                case 'recovery':
+                    if (this.punchBox.framesCurrent >= this.punchBox.framesTotal.recovery) {
+                        this.punchBox.phase = 'none'
+                        this.punchBox.framesCurrent = 0
+                        this.canAttack = true
+                    }
+                    break
             }
         }
-
+        
         //update healthbar
         this.healthBar.update();
+    }
+    // New method to initiate punch
+    startPunch() {
+        console.log(this.canAttack)
+        if (this.canAttack) {
+            this.punchBox.phase = 'startup'
+            this.punchBox.framesCurrent = 0
+        }
     }
 }
 

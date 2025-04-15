@@ -69,7 +69,35 @@ const keys = {
 }
 
 
+/* -------------------
+    |
+    |     COLLISION DETECTION
+    |
+*/ //-------------------
 
+function checkPunchCollisions() {
+    // Check p1's punch against p2
+    if (p1.punchBox.phase === 'active') {
+        let punchBox = p1.getPunchBox()
+        if (collision(punchBox, p2)) {
+            p2.hitByPunch()
+            // Optional: Could disable the active phase early when a hit connects
+            // p1.punchBox.phase = 'recovery'
+            // p1.punchBox.framesCurrent = 0
+        }
+    }
+
+    // Check p2's punch against p1
+    if (p2.punchBox.phase === 'active') {
+        let punchBox = p2.getPunchBox()
+        if (collision(punchBox, p1)) {
+            p1.hitByPunch()
+            // Optional: Could disable the active phase early when a hit connects
+            // p2.punchBox.phase = 'recovery'
+            // p2.punchBox.framesCurrent = 0
+        }
+    }
+}
 
 
 
@@ -101,33 +129,15 @@ function animate(){
         p2.velocity.x = p2.speed
     }
 
-    /* -------------------
-    |
-    |     COLLISION DETECTION
-    |
-    */ //-------------------
-
-    //test for collision between p1 attack and other player
-    if(!p1.canAttack){
-        let punchBox = p1.getPunchBox()
-        if(collision(punchBox, p2)){
-            p2.hitByPunch()
-        }
-    }
-    //test for collision between p2 attack and other player
-    if(!p2.canAttack){
-        let punchBox = p2.getPunchBox()
-        if(collision(punchBox, p1)){
-            p1.hitByPunch()
-        }
-    }
+    //collision detection
+    checkPunchCollisions()
 
     //Collision between Players (stops moving them through eachother)
     let p1X = p1.getPosition().x;
     let p2X = p2.getPosition().x;
 
-    console.log(p2X + " " + p1.getWidth + " " + p1.getVelocity.x + " " + p2X )
-    console.log(p1X + p1.getWidth + p1.getVelocity.x >= p2X )
+    //.log(p2X + " " + p1.getWidth + " " + p1.getVelocity.x + " " + p2X )
+    //console.log(p1X + p1.getWidth + p1.getVelocity.x >= p2X )
     //console.log(p2X > p1X)
     //console.log((p1.getPosition.y+p1.getHeight)==p2.getPosition.y)
 
@@ -226,9 +236,8 @@ window.addEventListener('keyup', (e) => {
             keys.a.pressed = false
             break
         case 'x': //p1 punch
-            if(p1.canAttack){
-                p1.punchBox.active = true;
-            }
+            p1.startPunch()
+            console.log('punch')
             break
     }
 
@@ -241,9 +250,7 @@ window.addEventListener('keyup', (e) => {
             keys.ArrowLeft.pressed = false
             break
         case '.': //p2 punch
-            if(p2.canAttack){
-                p2.punchBox.active = true
-            }
+            p2.startPunch()
             break
     }
 })
